@@ -1,3 +1,4 @@
+#include <vector>
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
@@ -33,6 +34,12 @@ int test2(){
 }
 
 int main(){
-	cout << "begin" << endl;
+	vector<string> vec;
+	vec.push_back("1234");
+	vec.push_back("2345");
+	cout << vec[0] << endl;
+	cout << vec[1] << endl;
+	cout << vec[2] << endl;
+	cout << vec[-1] << endl;
 	return 0;
 }
