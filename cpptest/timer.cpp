@@ -41,5 +41,6 @@ int main(){
 	cout << vec[1] << endl;
 	cout << vec[2] << endl;
 	cout << vec[-1] << endl;
+	cout << vec[-1] << endl;
 	return 0;
 }
