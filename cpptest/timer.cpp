@@ -31,3 +31,8 @@ int test2(){
 	cout << "exit" << endl;
 	return 0;
 }
+
+int main(){
+	cout << "begin" << endl;
+	return 0;
+}
