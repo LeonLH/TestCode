@@ -26,6 +26,9 @@ int test2(){
 	cout << boost::this_thread::get_id() << endl;
 	boost::asio::io_service io;
 	boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
+	sleep(4);
+	cout << "to cancel" << endl;
+	t.cancel();
 	t.async_wait(Print);
 	cout << "to run" << endl;
 	io.run();
@@ -33,14 +36,35 @@ int test2(){
 	return 0;
 }
 
-int main(){
-	vector<string> vec;
-	vec.push_back("1234");
-	vec.push_back("2345");
-	cout << vec[0] << endl;
-	cout << vec[1] << endl;
-	cout << vec[2] << endl;
-	cout << vec[-1] << endl;
-	cout << vec[-1] << endl;
+void Print(const boost::system::error_code &ec,
+		boost::asio::deadline_timer* pt,
+		int * pcount)
+{
+	if (*pcount < 3)
+	{
+		cout<<"count = "<<*pcount<<endl;
+		cout<<boost::this_thread::get_id()<<endl;
+		(*pcount) ++;
+
+		pt->expires_at(pt->expires_at() + boost::posix_time::seconds(5)) ;
+
+		pt->async_wait(boost::bind(Print, boost::asio::placeholders::error, pt, pcount));
+
+
+	}
+}
+
+int main()
+{
+	cout<<boost::this_thread::get_id()<<endl;
+	boost::asio::io_service io;
+	boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
+	int count = 0;
+	t.async_wait(boost::bind(Print, boost::asio::placeholders::error, &t, &count));
+	cout<<"to run"<<endl;
+	io.run();
+	cout << "Final count is " << count << "\n";
+	cout<<"exit"<<endl;
 	return 0;
+
 }
