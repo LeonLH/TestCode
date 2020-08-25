@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import chardet
 import MySQLdb
+import json
 
 # lit = []
 # lit.append("hello")
@@ -81,6 +82,25 @@ def test3():
 
     print str2
 
+def test4():
+    str1 = "{u'ErrorMsg': u'\u672a\u627e\u5230\u5904\u7406\u51fd\u6570', u'ErrorID': 200005}"
+    strU    = u'\u672a\u627e\u5230\u5904\u7406\u51fd\u6570'
+    strStrU =  '\u672a\u627e\u5230\u5904\u7406\u51fd\u6570'
+    strStrC = '\u5c0f\u660e'
+    print strU
+    print strStrU
+    print strStrC
+    # print repr(str2)
+
+def test5():
+    A = {}
+    A["one"] = 111
+    A["two"] = 222
+    A["three"] = "三"
+    # AJson = json.dumps(A, ensure_ascii=False)
+    AJson = json.dumps(A, ensure_ascii=True)
+    print AJson
+
 
 if __name__=="__main__":
-    test3()
+    test5()

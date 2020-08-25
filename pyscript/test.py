@@ -1,6 +1,7 @@
 #encoding:utf-8
 import time
 import datetime
+import chardet
 
 def test():
     stringLit = []
@@ -46,5 +47,13 @@ def test4():
     lit[0] = "zero"
     lit[1] = "one"
     print lit
+
+def test5():
+    ex = u"\u672a\u627e\u5230\u5904\u7406\u51fd\u6570"
+    ex = ex.encode('utf8')
+    print type(ex)
+    print chardet.detect(ex)
+    print "error: %s" %(ex)
+
 if __name__ == "__main__":
-    test4()
+    test5()
