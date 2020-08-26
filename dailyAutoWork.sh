@@ -24,3 +24,11 @@ echo $DATE >> $LOGFILE
 git push &>> $LOGFILE 
 
 
+cd /home/leon/workspace/WorkLog/CL
+
+echo $DATE >> $LOGFILE 
+# git commit -am "daily worklog" &>> $LOGFILE 
+git add . &>> $LOGFILE 
+git commit -m "daily upload worklog" &>> $LOGFILE 
+echo $DATE >> $LOGFILE 
+git push &>> $LOGFILE 
