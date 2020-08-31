@@ -1,4 +1,6 @@
 #encoding:utf-8
+import os
+import sys
 import time
 import datetime
 import chardet
@@ -55,5 +57,9 @@ def test5():
     print chardet.detect(ex)
     print "error: %s" %(ex)
 
+def test6():
+    print "error: %s"
+
 if __name__ == "__main__":
-    test5()
+    print(sys.argv[0])
+    print(os.getpid())
