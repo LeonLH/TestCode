@@ -58,8 +58,12 @@ def test5():
     print "error: %s" %(ex)
 
 def test6():
-    print "error: %s"
+    g_ErrMsgList.append("nihao")
+    g_ErrMsgList.append("hello")
+    errMsg = "-".join(g_ErrMsgList)
+    print errMsg
 
+global g_ErrMsgList
+g_ErrMsgList = []
 if __name__ == "__main__":
-    print(sys.argv[0])
-    print(os.getpid())
+    test6()
