@@ -86,7 +86,7 @@ def test4():
     str1 = "{u'ErrorMsg': u'\u672a\u627e\u5230\u5904\u7406\u51fd\u6570', u'ErrorID': 200005}"
     strU    = u'\u672a\u627e\u5230\u5904\u7406\u51fd\u6570'
     strStrU =  '\u672a\u627e\u5230\u5904\u7406\u51fd\u6570'
-    strStrC = '\u5c0f\u660e'
+    strStrC = u'\u65ad\u5f00'
     print strU
     print strStrU
     print strStrC
@@ -103,4 +103,4 @@ def test5():
 
 
 if __name__=="__main__":
-    test5()
+    test4()
