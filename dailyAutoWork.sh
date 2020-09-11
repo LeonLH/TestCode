@@ -16,6 +16,7 @@ export PATH
 DATE=`date +%Y-%m-%d\ %H:%M:%S`
 cd /home/leon/test/
 
+echo 'cd /home/leon/test/' >> $LOGFILE
 echo $DATE >> $LOGFILE 
 # git commit -am "daily upload testfile" &>> $LOGFILE 
 echo "git add ." >> $LOGFILE
@@ -28,6 +29,7 @@ git push &>> $LOGFILE
 
 
 cd /home/leon/workspace/WorkLog/CL
+echo 'cd /home/leon/workspace/WorkLog/CL' >> $LOGFILE
 echo $DATE >> $LOGFILE 
 # git commit -am "daily worklog" &>> $LOGFILE 
 echo "git add ." >> $LOGFILE
