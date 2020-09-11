@@ -18,17 +18,22 @@ cd /home/leon/test/
 
 echo $DATE >> $LOGFILE 
 # git commit -am "daily upload testfile" &>> $LOGFILE 
+echo "git add ." >> $LOGFILE
 git add . &>> $LOGFILE 
+echo "git commit -m 'daily upload testfile'" >> $LOGFILE
 git commit -m "daily upload testfile" &>> $LOGFILE 
 echo $DATE >> $LOGFILE 
+echo "git push" >> $LOGFILE
 git push &>> $LOGFILE 
 
 
 cd /home/leon/workspace/WorkLog/CL
-
 echo $DATE >> $LOGFILE 
 # git commit -am "daily worklog" &>> $LOGFILE 
+echo "git add ." >> $LOGFILE
 git add . &>> $LOGFILE 
+echo "git commit -m 'daily upload testfile'" >> $LOGFILE
 git commit -m "daily upload worklog" &>> $LOGFILE 
 echo $DATE >> $LOGFILE 
+echo "git push" >> $LOGFILE
 git push &>> $LOGFILE 
