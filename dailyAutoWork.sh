@@ -38,4 +38,4 @@ echo $DATE >> $LOGFILE
 echo "git push" >> $LOGFILE
 git push &>> $LOGFILE 
 
-echo "\n\n" >> $LOGFILE
+echo -e "\n\n" >> $LOGFILE
