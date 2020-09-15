@@ -89,6 +89,7 @@ def test4():
     strStrC = u'\u65ad\u5f00'
     print strU
     print strStrU
+
     print strStrC
     # print repr(str2)
 
@@ -101,6 +102,11 @@ def test5():
     AJson = json.dumps(A, ensure_ascii=True)
     print AJson
 
+def test6():
+    aaa = "\xe6\xb5\x8b"
+    print chardet.detect(aaa)
+    print aaa
+
 
 if __name__=="__main__":
-    test4()
+    test6()
