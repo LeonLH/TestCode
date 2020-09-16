@@ -14,9 +14,9 @@ export LOGFILE
 export PATH
 
 DATE=`date +%Y-%m-%d\ %H:%M:%S`
-cd /home/leon/test/
+cd /home/leon/workspace/test/
 
-echo 'cd /home/leon/test/' >> $LOGFILE
+echo 'cd /home/leon/workspace/test/' >> $LOGFILE
 echo $DATE >> $LOGFILE 
 echo "git add ." >> $LOGFILE
 git add . &>> $LOGFILE 

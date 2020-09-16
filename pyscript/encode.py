@@ -2,6 +2,8 @@
 import chardet
 import MySQLdb
 import json
+import os
+import sys
 
 # lit = []
 # lit.append("hello")
@@ -107,6 +109,11 @@ def test6():
     print chardet.detect(aaa)
     print aaa
 
+def test7():
+    DIR = "/home/leon/test"
+    for root, dirs, files in os.walk(DIR, True):
+        print root, dirs
+        break
 
 if __name__=="__main__":
-    test6()
+    test7()
