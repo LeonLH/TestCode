@@ -110,10 +110,14 @@ def test6():
     print aaa
 
 def test7():
-    DIR = "/home/leon/test"
-    for root, dirs, files in os.walk(DIR, True):
+    DIR = "/home/leon/workspace"
+    for root, dirs, files in os.walk(DIR):
         print root, dirs
         break
 
+def test8():
+    for aaa in range(1):
+        print aaa
+
 if __name__=="__main__":
-    test7()
+    test8()
