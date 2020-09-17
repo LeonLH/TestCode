@@ -13,6 +13,8 @@ import sys
 # for i in range(len(lit)):
 #     print i, lit[i]
 
+COUNT = 0
+
 def test():
     str = 'test_\u93b6\u66e1\u796b\u7f01\u5fd5\u608a'
 
@@ -116,8 +118,22 @@ def test7():
         break
 
 def test8():
-    for aaa in range(1):
+    for aaa in range(2):
         print aaa
 
+def test9():
+    global COUNT
+    for i in range(5):
+        COUNT = COUNT + 1
+
+def test10():
+    global COUNT
+    COUNT = COUNT * 2
+    print COUNT
+
 if __name__=="__main__":
-    test8()
+    test9()
+    test10()
+    print "out"
+    COUNT = COUNT + 2
+    print COUNT
