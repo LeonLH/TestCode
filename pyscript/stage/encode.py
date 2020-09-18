@@ -131,9 +131,22 @@ def test10():
     COUNT = COUNT * 2
     print COUNT
 
+def test11():
+    COUNT = 5
+    issueID = u"100"
+    print(type(int(issueID)))
+    print(type(issueID))
+
+    print u"INSERT, COUNT: %d, issueID: %d" %(COUNT, int(issueID))
+    print u"INSERT, COUNT: %d, issueID: %s" %(COUNT, issueID)
+
+    xx = 50*1024*1024*10
+    print u"xx: %d" %(xx)
+
+
+def test12():
+    for i in range(100):
+        print i
+
 if __name__=="__main__":
-    test9()
-    test10()
-    print "out"
-    COUNT = COUNT + 2
-    print COUNT
+    test12()
