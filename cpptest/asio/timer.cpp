@@ -39,25 +39,47 @@ int test2(){
 	return 0;
 }
 
-void Print(const boost::system::error_code &ec,
-		boost::asio::deadline_timer* pt,
-		int * pcount)
+// 什么是wait completion：定时器超时后要调用的句柄。
+// io.run调用wait completion句柄，如果不run，则定时器即使expired也没人调用print
+// 只有在io.run的时候才会调用定时器的异步wait所绑定的句柄，但是如果此时定时器的状态是unexpired，还需要等待直到expired才会调用
+
+// 如果有work，io.run()就会一直run下去。此时的work就是定时器的异步等待。一旦没有work去做，此时io.run()就会结束。
+// 在调用io_service::run()之前，一定要给他一些工作（work）去做，例如本例中的deadline_timer::async_wait()
+
+void print(const boost::system::error_code& /*e*/)
 {
-	if (*pcount < 3)
+	std::cout << "Hello, world!" << std::endl;
+}
+
+void test3(){
+	boost::asio::io_service io;
+	boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
+	cout << "before" << endl;
+	t.async_wait(&print);
+	sleep(3);
+	cout << "after" << endl;
+	io.run();
+}
+// 
+void Print(const boost::system::error_code &ec,
+		boost::asio::deadline_timer* t,
+		int * count)
+{
+	if (*count < 3)
 	{
-		cout<<"count = "<<*pcount<<endl;
-		cout<<boost::this_thread::get_id()<<endl;
-		(*pcount) ++;
+		cout<<"count = "<<*count<<endl;
+		// cout<<boost::this_thread::get_id()<<endl;
+		(*count) ++;
 
-		pt->expires_at(pt->expires_at() + boost::posix_time::seconds(5)) ;
+		t->expires_at(t->expires_at() + boost::posix_time::seconds(2)) ;
 
-		pt->async_wait(boost::bind(Print, boost::asio::placeholders::error, pt, pcount));
+		t->async_wait(boost::bind(Print, boost::asio::placeholders::error, t, count));
 	}
 }
 
-int test3()
+int test4()
 {
-	cout<<boost::this_thread::get_id()<<endl;
+	// cout<<boost::this_thread::get_id()<<endl;
 	boost::asio::io_service io;
 	boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
 	int count = 0;
@@ -69,26 +91,12 @@ int test3()
 	return 0;
 
 }
-
-
-void print(const boost::system::error_code& /*e*/)
-{
-	std::cout << "Hello, world!" << std::endl;
-}
-
-// 只有在io.run的时候才会调用定时器的异步wait所绑定的句柄，但是如果此时定时器的状态是unexpired，还需要等待直到expired才会调用
-// 什么是wait completion：定时器超时后要调用的句柄。
-void test4(){
-	boost::asio::io_service io;
-	boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
-	cout << "before" << endl;
-	t.async_wait(&print);
-	sleep(3);
-	cout << "after" << endl;
-	io.run();
-}
-
 int main(){
 	test4();
 	return 0;
 }
+
+
+
+
+
