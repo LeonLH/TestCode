@@ -65,10 +65,10 @@ void Print(const boost::system::error_code &ec,
 		boost::asio::deadline_timer* t,
 		int * count)
 {
-	if (*count < 3)
+	if (*count < 5)
 	{
 		cout<<"count = "<<*count<<endl;
-		// cout<<boost::this_thread::get_id()<<endl;
+		cout<<boost::this_thread::get_id()<<endl;
 		(*count) ++;
 
 		t->expires_at(t->expires_at() + boost::posix_time::seconds(2)) ;
@@ -79,7 +79,7 @@ void Print(const boost::system::error_code &ec,
 
 int test4()
 {
-	// cout<<boost::this_thread::get_id()<<endl;
+	cout<< "first thread: " << boost::this_thread::get_id()<<endl;
 	boost::asio::io_service io;
 	boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
 	int count = 0;
