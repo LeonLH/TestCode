@@ -170,6 +170,7 @@ public:
 		{
 			std::cout << "Timer 1: " << count_ << " thread:" << boost::this_thread::get_id() << std::endl;
 			++count_;
+			// 此处虽然要等待三秒但是不会阻塞，因为是异步的等待，意思是3s之后才会调用strand.wrap()
 			timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(3));
 			timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
 		}
@@ -192,12 +193,13 @@ private:
 };
 
 // io_service::run()被两个线程调用，一个是主线程，一个是t线程
+// strand是一个线程池，所谓保序，意思是先进入这个线程池的句柄被先调用。
 void test6(){
 	boost::asio::io_service io;
 	printer p(io);
-	// boost::thread t(boost::bind(&boost::asio::io_service::run, &io));
+	boost::thread t(boost::bind(&boost::asio::io_service::run, &io));
 	io.run();
-	// t.join();
+	t.join();
 }
 
 int main(){
