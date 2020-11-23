@@ -147,7 +147,7 @@ void test5(){
 //
 // 为了解决上述问题，可以使用线程池来调用io_service::run()，注意此时要访问共享的非线程安全的资源。
 // boost::asio::strand 可以确保句柄的调用是保序的，一个后开始的句柄一定在前一个句柄执行结束之后才开始。
-// strand::wrap()返回一个包含原句柄的新的句柄，通过wrap后的句柄能够保证，顺序执行，不并发执行。
+// strand::wrap()返回一个包含原句柄的新的句柄，通过wrap后的句柄能够保证，顺序执行，不并发执行。在多线程应用中，如果要访问共享变量，此时可以通过此方法把异步操作同步化。
 class printer
 {
 public:
@@ -168,9 +168,9 @@ public:
 	{
 		if (count_ < 10)
 		{
-			std::cout << "Timer 1: " << count_ << std::endl;
+			std::cout << "Timer 1: " << count_ << " thread:" << boost::this_thread::get_id() << std::endl;
 			++count_;
-			timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
+			timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(3));
 			timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
 		}
 	}
@@ -178,7 +178,7 @@ public:
 	{
 		if (count_ < 10)
 		{
-			std::cout << "Timer 2: " << count_ << std::endl;
+			std::cout << "Timer 2: " << count_ << " thread:" << boost::this_thread::get_id()<< std::endl;
 			++count_;
 			timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
 			timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
@@ -191,12 +191,13 @@ private:
 	int count_;
 };
 
+// io_service::run()被两个线程调用，一个是主线程，一个是t线程
 void test6(){
 	boost::asio::io_service io;
 	printer p(io);
-	boost::thread t(boost::bind(&boost::asio::io_service::run, &io));
+	// boost::thread t(boost::bind(&boost::asio::io_service::run, &io));
 	io.run();
-	t.join();
+	// t.join();
 }
 
 int main(){
