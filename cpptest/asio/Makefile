@@ -7,7 +7,7 @@ export BUILD_HOME_DIR = $(shell pwd)
 # export BUILD_OUT_DIR  = $(BUILD_HOME_DIR)
 
 PROGRAM = Main
-LIBS    = -L/usr/local/lib -lboost_system
+LIBS    = -L/usr/local/lib -lboost_system -lboost_thread
 SOURCE  = $(wildcard *.cpp)
 OBJS 	= $(patsubst %.cpp,%.o, $(SOURCE)) 
 

@@ -60,18 +60,29 @@ void test3(){
 	cout << "after" << endl;
 	io.run();
 }
-// 
+
+// 1. 在定时器绑定的函数里面重置了定时器，实现5次调用定时器绑定的函数
+// 2. 注意这5次调用虽然是异步的，但是都在同一个线程里面（线程号一样），同步异步和转不转线程无关
+// 3. expires_at() 在什么时候过期
+// 4. expires_from_now() 距离现在还有多长时间过期，如果是负数意味着已经过期了几秒
 void Print(const boost::system::error_code &ec,
 		boost::asio::deadline_timer* t,
 		int * count)
 {
-	if (*count < 5)
+	cout << "begin print =====" << endl;
+	cout << "expires_at: " << t->expires_at() << endl; 
+	// cout << "sleep 3s" << endl;
+	// sleep(3);
+	if (*count < 4)
 	{
 		cout<<"count = "<<*count<<endl;
-		cout<<boost::this_thread::get_id()<<endl;
+		// cout<<boost::this_thread::get_id()<<endl;
 		(*count) ++;
 
-		t->expires_at(t->expires_at() + boost::posix_time::seconds(2)) ;
+		cout << "expires_from_now: " << t->expires_from_now() << endl;
+		cout << "before expires_at: " << t->expires_at() << endl;
+		t->expires_at(t->expires_at() + boost::posix_time::seconds(1)) ;	// 重置定时器为2秒
+		cout << "after  expires_at: " << t->expires_at() << endl;
 
 		t->async_wait(boost::bind(Print, boost::asio::placeholders::error, t, count));
 	}
@@ -81,9 +92,10 @@ int test4()
 {
 	cout<< "first thread: " << boost::this_thread::get_id()<<endl;
 	boost::asio::io_service io;
-	boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
+	boost::asio::deadline_timer t(io, boost::posix_time::seconds(3));
 	int count = 0;
 	t.async_wait(boost::bind(Print, boost::asio::placeholders::error, &t, &count));
+	cout << "expires_from_now: " << t.expires_from_now() << endl;
 	cout<<"to run"<<endl;
 	io.run();
 	cout << "Final count is " << count << "\n";
@@ -91,8 +103,104 @@ int test4()
 	return 0;
 
 }
+
+class printer_0
+{
+	public:
+		printer_0(boost::asio::io_service& io)
+			: timer_(io, boost::posix_time::seconds(1)),
+			count_(0)
+		{
+			timer_.async_wait(boost::bind(&printer_0::print, this));
+		}
+		~printer_0()
+		{
+			std::cout << "Final count is " << count_ << std::endl;
+		}
+		// 所有的非静态成员函数都有一个隐含的this参数
+		// boost::bind()把回调函数print转换成了函数对象（function object）
+		void print()
+		{
+			if (count_ < 5)
+			{
+				std::cout << count_ << std::endl;
+				++count_;
+				timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));
+				timer_.async_wait(boost::bind(&printer_0::print, this));
+			}
+		}
+	private:
+		boost::asio::deadline_timer timer_;
+		int count_;
+};
+
+void test5(){
+	boost::asio::io_service io;
+	printer_0 p(io);
+	io.run();
+}
+// callback handler 只能通过io_service::run()在线程中调用.
+
+// 前面几个例子都是单线程调用cb句柄，这样调用有以下缺点：
+// 	1. 当cb句柄执行时间太长时，响应性太低；
+// 	2. 对于多核处理器没有可扩展性。
+//
+// 为了解决上述问题，可以使用线程池来调用io_service::run()，注意此时要访问共享的非线程安全的资源。
+// boost::asio::strand 可以确保句柄的调用是保序的，一个后开始的句柄一定在前一个句柄执行结束之后才开始。
+// strand::wrap()返回一个包含原句柄的新的句柄，通过wrap后的句柄能够保证，顺序执行，不并发执行。
+class printer
+{
+public:
+	printer(boost::asio::io_service& io)
+		: strand_(io),
+		timer1_(io, boost::posix_time::seconds(1)),
+		timer2_(io, boost::posix_time::seconds(1)),
+		count_(0)
+	{
+		timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
+		timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
+	}
+	~printer()
+	{
+		std::cout << "Final count is " << count_ << std::endl;
+	}
+	void print1()
+	{
+		if (count_ < 10)
+		{
+			std::cout << "Timer 1: " << count_ << std::endl;
+			++count_;
+			timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
+			timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
+		}
+	}
+	void print2()
+	{
+		if (count_ < 10)
+		{
+			std::cout << "Timer 2: " << count_ << std::endl;
+			++count_;
+			timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
+			timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
+		}
+	}
+private:
+	boost::asio::io_service::strand strand_;
+	boost::asio::deadline_timer timer1_;
+	boost::asio::deadline_timer timer2_;
+	int count_;
+};
+
+void test6(){
+	boost::asio::io_service io;
+	printer p(io);
+	boost::thread t(boost::bind(&boost::asio::io_service::run, &io));
+	io.run();
+	t.join();
+}
+
 int main(){
-	test4();
+	test6();
 	return 0;
 }
 
