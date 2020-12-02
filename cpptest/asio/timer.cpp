@@ -199,8 +199,42 @@ void test6(){
 	t.join();
 }
 
+boost::asio::deadline_timer * m_timer;
+
+long long icount = 0;
+
+void function1()
+{
+	std::cout << "1 " << icount++ << std::endl;
+	m_timer->expires_from_now(boost::posix_time::seconds(3));
+	m_timer->async_wait(boost::BOOST_BIND(&function1));
+
+}
+
+void function2()
+{
+	std::cout << "2 " << icount++ << std::endl;
+	m_timer->expires_from_now(boost::posix_time::seconds(3));
+	m_timer->async_wait(boost::BOOST_BIND(&function2));
+
+}
+
+int test7()
+{
+	boost::asio::io_service ios;
+	m_timer = new boost::asio::deadline_timer(ios);
+
+	m_timer->expires_from_now(boost::posix_time::seconds(3));
+	m_timer->async_wait(boost::BOOST_BIND(&function1));
+	sleep(5);
+	m_timer->expires_from_now(boost::posix_time::seconds(3));
+	m_timer->async_wait(boost::BOOST_BIND(&function2));
+	
+	ios.run();
+}
+
 int main(){
-	test6();
+	test7();
 	return 0;
 }
 
