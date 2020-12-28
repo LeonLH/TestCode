@@ -41,7 +41,108 @@ def testTime():
     print Timedate
 
 
-if __name__=="__main__":
-    testRangeOfString()
+def isSFFtOption(m_strInstrumentID, m_strExchangeID):
+    falg = False
+    strInstr = "au*****?|cu*****?|al*****?|ru*****?"
+    list = strInstr.split("|")
+    for tmp in list:
+        for c, b in zip(tmp, m_strInstrumentID):
+            falg = True
+            if c == '*':
+                continue
+            if c == '?':
+                break
+            if c != b:
+                falg = False
+                break
+        if falg == True:
+            return falg
+    return falg
+
+def isZFFtOption(m_strInstrumentID, m_strExchangeID):
+    # if m_strInstrumentID == "CFFEX":
+    #    return False
+    falg = False
+    strInstr = "SR****?|CF****?|TA****?|MA****?|RM****?"
+    list = strInstr.split("|")
+    for tmp in list:
+        print "==="
+        for c, b in zip(tmp, m_strInstrumentID):
+            print c, b
+            falg = True
+            if c == '*':
+                continue
+            if c == '?':
+                break
+            if c != b:
+                falg = False
+                break
+        if falg == True:
+            return falg
+    return falg
+
+def isDFFtOPtion(m_strInstrumentID, m_strExchangeID):
+    falg = False
+    strInstr = "m****-*-?|c****-*-?|i****-*-?|y****-*-?|p****-*-?|j****-*-?|jm****-*-?"
+    list = strInstr.split("|")
+    for tmp in list:
+        for c, b in zip(tmp, m_strInstrumentID):
+            falg = True
+            if c == '*':
+                continue
+            if c == '?':
+                break
+            if c != b:
+                falg = False
+                break
+        if falg == True:
+            return falg
+    return falg
     
+def isIfOption(m_strInstrumentID, m_strExchangeID):
+    falg = True
+    strInstr = "HO?|IO?|IF?^&&IO?"
+    list = strInstr.split("|")
+    for tmp in list:
+        for c, b in zip(tmp, m_strInstrumentID):
+            falg = True
+            if c == '*':
+                continue
+            if c == '?':
+                break
+            if c != b:
+                falg = False
+                break
+        if falg == True:
+            return falg
+    return falg
+            
+#def isIntlOption(m_strInstrumentID, m_strExchangeID):
+
+def isFutureOptionInstrument(m_strExchangeID, m_strInstrumentID):
+    falg = isZFFtOption(m_strInstrumentID, m_strExchangeID) or isDFFtOPtion(m_strInstrumentID, m_strExchangeID) or isSFFtOption(m_strInstrumentID, m_strExchangeID) or isIfOption(m_strInstrumentID, m_strExchangeID)
+    return falg
+if __name__=="__main__":
+    print isFutureOptionInstrument("", "IC2101")
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
